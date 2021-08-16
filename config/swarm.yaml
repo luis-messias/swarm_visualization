@@ -1,0 +1,3 @@
+num_robots: 1
+#mesh_file: package://swarm_visualization/meshes/mechanite_treads.stl
+mesh_file: package://swarm_visualization/meshes/test.stl
