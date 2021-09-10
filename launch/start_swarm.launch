@@ -1,4 +1,7 @@
 <launch>
+    <node pkg="rviz" type="rviz" name="rviz" output="screen">
+    </node>
+
     <node pkg="swarm_visualization" type="swarm_node.py" name="swarm_node" output="screen">
         <rosparam command="load" file="$(find swarm_visualization)/config/swarm.yaml" />
     </node>
