@@ -19,16 +19,16 @@ class robot():
         this.yaw = YAW0
         this.vx = 0
         this.wz = 0
-        
+        this.cmd_time = rospy.Time.now()
 
         this.marker = Marker()
         this.marker.header.frame_id = frame_id
         this.marker.type = this.marker.MESH_RESOURCE
         this.marker.mesh_resource = meshes
         this.marker.action = this.marker.ADD
-        this.marker.scale.x = 0.2
-        this.marker.scale.y = 0.2
-        this.marker.scale.z = 0.2
+        this.marker.scale.x = 0.1
+        this.marker.scale.y = 0.1
+        this.marker.scale.z = 0.1
         this.marker.color.a = 1.0
         this.marker.color.r = 0.0
         this.marker.color.g = 1.0
@@ -90,8 +90,13 @@ class robot():
     def cb_cmd(this, msg):
         this.vx = msg.linear.x
         this.wz = msg.angular.z
+        this.cmd_time = rospy.Time.now()
 
     def update_pose(this,dt):
+        if (rospy.Time.now() - this.cmd_time).secs > 0.5:
+            this.vx = 0
+            this.wz = 0
+
         this.x += this.vx*dt*math.cos(this.yaw)
         this.y += this.vx*dt*math.sin(this.yaw)
         this.yaw += this.wz*dt
@@ -180,7 +185,7 @@ while not rospy.is_shutdown():
             robots[i].set_marker_yellow()
         else:
             robots[i].set_marker_green()
-        print(distancias)
+        #print(distancias)
         robots[i].update_pose(dt)
         markerArray.markers[i] = robots[i].get_marker()
         

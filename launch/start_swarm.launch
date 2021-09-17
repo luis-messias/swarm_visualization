@@ -1,5 +1,6 @@
 <launch>
-    <node pkg="rviz" type="rviz" name="rviz" output="screen">
+    <node pkg="rviz" type="rviz" name="rviz" output="screen" args="-d$(find swarm_visualization)/config/rviz.rviz" >
+
     </node>
 
     <node pkg="swarm_visualization" type="swarm_node.py" name="swarm_node" output="screen">
