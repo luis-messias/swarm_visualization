@@ -1,4 +1,4 @@
-# Node
+# Swarm Vizualization
 
 ## Swarm_node
 The Swarm_node creates a swarm vizualization on Rviz, this takes Twists inputs and generates Rviz vizualization for the robots
