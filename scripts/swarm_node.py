@@ -1,19 +1,6 @@
 #!/usr/bin/env python3
-
-from geometry_msgs.msg import Twist
-from nav_msgs.msg import Odometry
-import tf
 import rospy
-import math
-import tf2_ros
-import geometry_msgs.msg
-import numpy as np
-
 from swarm import swarmClass
-
-
-
-
 
 
 
@@ -23,9 +10,6 @@ from swarm import swarmClass
 #         this.vx = 0
 #         this.wz = 0
 
-
-
-        
 
 rospy.init_node("swarm_name")
 

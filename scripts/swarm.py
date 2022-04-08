@@ -1,19 +1,17 @@
 import rospy
-import copy
-
 
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
 
 import tf2_ros
-import geometry_msgs.msg
-
 import tf
-
+import geometry_msgs.msg
 
 from visualization_msgs.msg import Marker
 from visualization_msgs.msg import MarkerArray
+
 import numpy as np
+import copy
 
 class swarmClass():   
 
@@ -33,6 +31,7 @@ class swarmClass():
         self.hit_radius = float(rospy.get_param("/" + self.swarm_name + '/hit_radius',1.1))
         self.warning_radius = float(rospy.get_param("/" + self.swarm_name + '/warning_radius',2))
         #self.cmd_time_out = float(rospy.get_param("/" + self.swarm_name + '/cmd_time_out',1))
+        
         #Arrays
         self.robots_position_x = np.zeros(self.robots_number)
         self.robots_position_y = np.zeros(self.robots_number)
@@ -46,6 +45,7 @@ class swarmClass():
 
         self.marker_array = MarkerArray()
 
+        # Initializing arrays
         initial_marker = Marker()
         initial_marker.header.frame_id = self.fixed_frame
         initial_marker.type = initial_marker.MESH_RESOURCE
@@ -59,7 +59,6 @@ class swarmClass():
         initial_marker.color.g = 1.0
         initial_marker.color.b = 0.0
 
-        # Initializing arrays
         for i in range(self.robots_number):
             self.robots_position_x[i] = rospy.get_param("/" + self.swarm_name + '/x_' + str(i),0)
             self.robots_position_y[i] = rospy.get_param("/" + self.swarm_name + '/y_' + str(i),0)
@@ -173,7 +172,7 @@ class swarmClass():
                     self.robots_distance_matrix[i][j] += (self.robots_position_y[i] - self.robots_position_y[j]) ** 2
                     self.robots_distance_matrix[i][j] =   self.robots_distance_matrix[i][j] ** 0.5
     
-    def update_velocity_limiter(self):
+    def update_velocity_limiter(self, dt):
         self.robots_velocity_vx = self.velocity_vx_setpoit
         self.robots_velocity_wz = self.velocity_wz_setpoit
 
@@ -188,7 +187,7 @@ class swarmClass():
         self.t_last_update += dt
 
         #print("Update: ", dt)
-        self.update_velocity_limiter()
+        self.update_velocity_limiter(dt)
         self.integrate_system(dt)
         self.update_distance_matrix()
         self.publish_all()
