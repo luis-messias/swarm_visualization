@@ -82,7 +82,6 @@ class swarmClass():
     def callback_twist(self, msg, i):
         self.velocity_vx_setpoit[i] = msg.linear.x
         self.velocity_wz_setpoit[i] = msg.angular.z
-        print("Callback: ", i)
 
     def set_marker_green(this, marker):
         marker.color.r = 0.0
