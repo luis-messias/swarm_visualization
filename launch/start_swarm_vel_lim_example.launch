@@ -1,0 +1,20 @@
+<launch>
+
+    <node pkg="rviz" type="rviz" name="rviz" output="screen" args="-d$(find swarm_visualization)/config/rviz.rviz" >
+    </node>
+
+    <node pkg="swarm_visualization" type="swarm_node.py" name="swarm_node" output="screen">
+        <rosparam command="load" file="$(find swarm_visualization)/config/swarm_exp_vel_lim.yaml" />
+    </node>
+
+    <node name="pos_vel_plot"
+        pkg="rqt_plot"
+        type="rqt_plot"
+        args="/swarm_node/robot_0/odom/pose/pose/position/x /swarm_node/robot_0/odom/twist/twist/linear/x " />
+  
+    <node pkg="rostopic" 
+        type="rostopic" 
+        name="publisher" 
+        args="pub /swarm_node/robot_0/cmd_vel geometry_msgs/Twist -r 1 -- '[10000.0, 0.0, 0.0]' '[0.0, 0.0, 0.0]' " 
+        output="screen"/>
+</launch>

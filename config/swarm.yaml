@@ -6,6 +6,13 @@ hit_radius: 0.20
 warning_radius: 0.50
 #cmd_time_out: 1.0
 
+has_velocity_limiter: true
+max_vx: 0.2
+max_wz: 0.2
+has_acceleration_limiter: false
+max_acc_x: 1
+max_acc_z: 1
+
 x_0: 0
 y_0: 0
 x_1: 0

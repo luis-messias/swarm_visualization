@@ -32,6 +32,15 @@ class swarmClass():
         self.warning_radius = float(rospy.get_param("/" + self.swarm_name + '/warning_radius',2))
         #self.cmd_time_out = float(rospy.get_param("/" + self.swarm_name + '/cmd_time_out',1))
         
+        #Velocity and aceleration limiter
+        self.has_velocity_limiter = bool(rospy.get_param("/" + self.swarm_name + '/has_velocity_limiter', 0))
+        self.max_vx = float(rospy.get_param("/" + self.swarm_name + '/max_vx', 1))
+        self.max_wz = float(rospy.get_param("/" + self.swarm_name + '/max_wz', 1))
+
+        self.has_acceleration_limiter = bool(rospy.get_param("/" + self.swarm_name + '/has_acceleration_limiter',0))
+        self.max_acc_x = float(rospy.get_param("/" + self.swarm_name + '/max_acc_x', 1))
+        self.max_acc_z = float(rospy.get_param("/" + self.swarm_name + '/max_acc_z', 1))
+        
         #Arrays
         self.robots_position_x = np.zeros(self.robots_number)
         self.robots_position_y = np.zeros(self.robots_number)
@@ -100,6 +109,7 @@ class swarmClass():
     
     def publish_marker_array(self):
         for i in range(self.robots_number):
+            self.marker_array.markers[i].header.stamp = rospy.Time.now()
             self.marker_array.markers[i].pose.position.x = self.robots_position_x[i]
             self.marker_array.markers[i].pose.position.y = self.robots_position_y[i]
             
@@ -121,7 +131,7 @@ class swarmClass():
     def publish_odom(self):
         odom = Odometry()
         odom.header.frame_id = self.fixed_frame
-        
+        odom.header.stamp = rospy.Time.now()
         for i in range(self.robots_number):
             odom.pose.pose.position.x = self.robots_position_x[i]
             odom.pose.pose.position.y = self.robots_position_y[i]
@@ -172,8 +182,23 @@ class swarmClass():
                     self.robots_distance_matrix[i][j] =   self.robots_distance_matrix[i][j] ** 0.5
     
     def update_velocity_limiter(self, dt):
-        self.robots_velocity_vx = self.velocity_vx_setpoit
-        self.robots_velocity_wz = self.velocity_wz_setpoit
+        #Limiting acceleration
+        if self.has_acceleration_limiter:
+            Dvx_max = self.max_acc_x * dt
+            Dwz_max = self.max_acc_z * dt
+            self.robots_velocity_vx = np.clip(self.velocity_vx_setpoit, self.robots_velocity_vx - Dvx_max, self.robots_velocity_vx + Dvx_max)
+            self.robots_velocity_wz = np.clip(self.velocity_wz_setpoit, self.robots_velocity_wz - Dwz_max, self.robots_velocity_wz + Dwz_max)
+        else:
+            self.robots_velocity_vx = self.velocity_vx_setpoit
+            self.robots_velocity_wz = self.velocity_wz_setpoit
+
+        #Limiting velocity
+        if self.has_velocity_limiter:
+            self.robots_velocity_vx = np.clip(self.robots_velocity_vx, -self.max_vx, self.max_vx)
+            self.robots_velocity_wz = np.clip(self.robots_velocity_wz, -self.max_wz, self.max_wz)
+        else:
+            self.robots_velocity_vx = self.velocity_vx_setpoit
+            self.robots_velocity_wz = self.velocity_wz_setpoit
 
     def integrate_system(self, dt):
         self.robots_position_x   += self.robots_velocity_vx*np.cos(self.robots_position_yaw)*dt

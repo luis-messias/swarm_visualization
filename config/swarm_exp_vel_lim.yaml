@@ -1,0 +1,17 @@
+mesh_file: package://swarm_visualization/meshes/test.stl
+#mesh_file: package://swarm_visualization/meshes/mechanite_treads.stl
+
+num_robots: 1
+hit_radius: 0.20
+warning_radius: 0.50
+#cmd_time_out: 1.0
+
+has_velocity_limiter: true
+max_vx: 1.5
+max_wz: 1
+has_acceleration_limiter: true
+max_acc_x: 1
+max_acc_z: 1
+
+x_0: 0
+y_0: 0
