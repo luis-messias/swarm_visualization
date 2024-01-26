@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import rospy
-from swarm import SwarmClass
-from swam_publisher_and_subscriber import RosPublish, RosSubscriber
+from modules.swarm_class import SwarmClass
+from modules.swarm_ros_interface import RosPublish, RosSubscriber
 
 rospy.init_node("swarm_name")
 swarm = SwarmClass()
